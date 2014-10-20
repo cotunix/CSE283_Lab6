@@ -1,6 +1,5 @@
 package edu.miamioh.cse283.lab6;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ public class SoftwareRouter {
 	 *            is the number of bits for the network prefix.
 	 */
 	public void addLink(Link link, Address network_address, int subnet_mask) {
-		h.put(network_address.ip >> subnet_mask, link);
+		h.put(network_address.ip >> (32 - subnet_mask), link);
 	}
 
 	/**
