@@ -1,7 +1,8 @@
 package edu.miamioh.cse283.lab6;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 /**
  * Software router template for CSE283 Lab 6, FS2014.
@@ -24,7 +25,8 @@ public class SoftwareRouter {
 	 *            is the number of bits for the network prefix.
 	 */
 	public void addLink(Link link, Address network_address, int subnet_mask) {
-		h.put(network_address.ip >> (32 - subnet_mask), link);
+		int subnet = ~((int)(Math.pow(2, 32 - subnet_mask) - 1));
+		h.put(network_address.ip & subnet, link);
 	}
 
 	/**
@@ -35,10 +37,14 @@ public class SoftwareRouter {
 	 */
 	public void removeLink(Link link) {
 
-		Set<Integer> k = h.keySet();
-		for (Integer j : k) {
-			if (h.get(j) == link)
-				h.remove(j);
+		// God bless stackoverflow
+		Iterator<Entry<Integer, Link>> i = h.entrySet().iterator();
+		while (i.hasNext()) {
+			Entry<Integer, Link> hEntry = i.next();
+			if (hEntry.getValue() == link) {
+				i.remove();
+			}
+
 		}
 	}
 
@@ -53,13 +59,11 @@ public class SoftwareRouter {
 		// once the correct outgoing link has been identified, call
 		// link.send(pkt, this);
 		for (int i = 0; i <= 32; i++) {
-			
-			System.out.println((pkt.dst.getIP() >> i) + "yeah ok" );
-			if (h.get(pkt.dst.getIP() >> i) != null) {
-				h.get(pkt.dst.getIP() >> i).send(pkt);
+
+			if (h.get(pkt.dst.getIP() & ~((int)(Math.pow(2, i) - 1))) != null) {
+				h.get(pkt.dst.getIP() & ~((int)(Math.pow(2, i) - 1))).send(pkt);
 				break;
 			}
-			System.out.println(i);
 
 		}
 	}
