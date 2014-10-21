@@ -23,7 +23,7 @@ public class Link {
 	 * @param pkt is the packet to send on this link.
 	 */
 	public void send(Packet pkt) {
-		System.out.println("Packet received");
+		
 		dst.receivePacket(pkt);
 		
 	}

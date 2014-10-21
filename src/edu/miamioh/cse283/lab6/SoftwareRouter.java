@@ -1,6 +1,10 @@
 package edu.miamioh.cse283.lab6;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+
 
 
 
@@ -18,10 +22,7 @@ public class SoftwareRouter {
 			this.K = K;
 			this.T = T;
 		}
-		public Pair() {
-			this.K = null;
-			this.T = null;
-		}
+		
 	}
 	protected HashMap<Integer, Pair<Link, Integer>> h = new HashMap<Integer, Pair<Link, Integer>>();
 
@@ -38,7 +39,9 @@ public class SoftwareRouter {
 	 */
 	public void addLink(Link link, Address network_address, int subnet_mask) {
 		int subnet = ~((int) (Math.pow(2, 32 - subnet_mask) - 1));
-		h.put(network_address.ip & subnet, new Pair<Link, Integer>(link, subnet_mask));
+		Pair<Link, Integer> k = new Pair<Link, Integer>(link, subnet_mask);
+		h.put(network_address.getIP() & subnet, k);
+		
 	}
 
 	/**
@@ -50,7 +53,18 @@ public class SoftwareRouter {
 	public void removeLink(Link link) {
 
 
-		h.values().remove(link);
+		Iterator<Entry<Integer, Pair<Link, Integer>>> entries = h.entrySet().iterator();
+		while(entries.hasNext()) {			
+			Entry<Integer, Pair<Link, Integer>> thisEntry = (Entry<Integer, Pair<Link, Integer>>) entries.next();
+			if (thisEntry.getValue().K == link) {
+				entries.remove();
+				return;
+			}
+			
+		
+			
+		}
+		throw new IllegalArgumentException("Error: Tried to remove nonexistant link");
 		
 	}
 
@@ -64,14 +78,14 @@ public class SoftwareRouter {
 	public void receivePacket(Packet pkt) {
 		// once the correct outgoing link has been identified, call
 		// link.send(pkt, this);
-		Pair<Link, Integer> temp = new Pair<Link, Integer>();
+		Pair<Link, Integer> temp;
 		for (int i = 0; i <= 32; i++) {
 			temp = h.get(pkt.dst.getIP() & ~((int) (Math.pow(2, i) - 1)));
 			if (temp != null) {
 				if (temp.T == (32 - i))
 					temp.K.send(pkt);
 						
-				break;
+				
 			}
 
 		}
