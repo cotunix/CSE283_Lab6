@@ -24,6 +24,7 @@ public class SoftwareRouter {
 		}
 		
 	}
+
 	protected HashMap<Integer, Pair<Link, Integer>> h = new HashMap<Integer, Pair<Link, Integer>>();
 
 	/**
@@ -38,9 +39,9 @@ public class SoftwareRouter {
 	 *            is the number of bits for the network prefix.
 	 */
 	public void addLink(Link link, Address network_address, int subnet_mask) {
-		int subnet = ~((int) (Math.pow(2, 32 - subnet_mask) - 1));
-		Pair<Link, Integer> k = new Pair<Link, Integer>(link, subnet_mask);
-		h.put(network_address.getIP() & subnet, k);
+		
+		
+		h.put(network_address.getIP() >> (32 - subnet_mask), new Pair<Link, Integer>(link, subnet_mask));
 		
 	}
 
@@ -80,10 +81,12 @@ public class SoftwareRouter {
 		// link.send(pkt, this);
 		Pair<Link, Integer> temp;
 		for (int i = 0; i <= 32; i++) {
-			temp = h.get(pkt.dst.getIP() & ~((int) (Math.pow(2, i) - 1)));
+			temp = h.get(pkt.dst.getIP() >> i);
 			if (temp != null) {
-				if (temp.T == (32 - i))
+				if (temp.T == (32 - i)){
 					temp.K.send(pkt);
+					break;
+				}
 						
 				
 			}
