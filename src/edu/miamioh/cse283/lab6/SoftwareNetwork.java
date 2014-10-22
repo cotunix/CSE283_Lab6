@@ -115,6 +115,10 @@ public class SoftwareNetwork {
 		System.out.println("========");
 		System.out.println("Route r1->r2 should still work as normal:");				
 		r1.receivePacket(new Packet(new Address(0x00000101), new Address(0x00000201)));
+		
+		System.out.println("========");
+		System.out.println("LPM:");
+		r1.receivePacket(new Packet(new Address(0x00000101), new Address(0x00000481)));
 	}
 
 	public static void main(String[] args) {
