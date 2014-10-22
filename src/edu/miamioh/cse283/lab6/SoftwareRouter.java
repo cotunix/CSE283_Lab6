@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-
-
-
-
 /**
  * Software router template for CSE283 Lab 6, FS2014.
  * 
@@ -18,11 +14,12 @@ public class SoftwareRouter {
 	public class Pair<A, B> {
 		public A K;
 		public B T;
+
 		public Pair(A K, B T) {
 			this.K = K;
 			this.T = T;
 		}
-		
+
 	}
 
 	protected HashMap<Integer, Pair<Link, Integer>> h = new HashMap<Integer, Pair<Link, Integer>>();
@@ -39,10 +36,9 @@ public class SoftwareRouter {
 	 *            is the number of bits for the network prefix.
 	 */
 	public void addLink(Link link, Address network_address, int subnet_mask) {
-		
-		
-		h.put(network_address.getIP() >> (32 - subnet_mask), new Pair<Link, Integer>(link, subnet_mask));
-		
+		h.put(network_address.getIP() >> (32 - subnet_mask),
+				new Pair<Link, Integer>(link, subnet_mask));
+
 	}
 
 	/**
@@ -53,20 +49,20 @@ public class SoftwareRouter {
 	 */
 	public void removeLink(Link link) {
 
-
-		Iterator<Entry<Integer, Pair<Link, Integer>>> entries = h.entrySet().iterator();
-		while(entries.hasNext()) {			
-			Entry<Integer, Pair<Link, Integer>> thisEntry = (Entry<Integer, Pair<Link, Integer>>) entries.next();
+		Iterator<Entry<Integer, Pair<Link, Integer>>> entries = h.entrySet()
+				.iterator();
+		while (entries.hasNext()) {
+			Entry<Integer, Pair<Link, Integer>> thisEntry = (Entry<Integer, Pair<Link, Integer>>) entries
+					.next();
 			if (thisEntry.getValue().K == link) {
 				entries.remove();
 				return;
 			}
-			
-		
-			
+
 		}
-		throw new IllegalArgumentException("Error: Tried to remove nonexistant link");
-		
+		throw new IllegalArgumentException(
+				"Error: Tried to remove nonexistant link");
+
 	}
 
 	/**
@@ -83,12 +79,11 @@ public class SoftwareRouter {
 		for (int i = 0; i <= 32; i++) {
 			temp = h.get(pkt.dst.getIP() >> i);
 			if (temp != null) {
-				if (temp.T == (32 - i)){
+				if (temp.T == (32 - i)) {
 					temp.K.send(pkt);
 					break;
 				}
-						
-				
+
 			}
 
 		}
